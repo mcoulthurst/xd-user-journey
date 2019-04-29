@@ -1,10 +1,11 @@
 'use strict';
-const { Rectangle, Ellipse , Text, Color } = require("scenegraph");
+const { Rectangle, Ellipse, Text, Color } = require("scenegraph");
 const assets = require("assets");
 const CSV = require("./csv");
 const fs = require("uxp").storage.localFileSystem;
 const textFill = ["grey-3", '#dee0e2'];
-const trafficLights =[
+const textFillDark = ["grey-1", '#6f777b'];
+const trafficLights = [
     ["green", '#006435'],
     ["green (button)", '#00823b'],
     ["light-green", '#85994b'],
@@ -13,7 +14,7 @@ const trafficLights =[
     ["bright-red", '#df3034'],
     ["red", '#b10e1e']
 ];
-const rowColor =[
+const rowColor = [
     ["light-blue", '#2b8cc4'],
     ["green (button)", '#00823b'],
     ["bright-purple", '#912b88'],
@@ -29,7 +30,7 @@ const gutterY = 32;
 var fontSize = 12;
 var fontHeaderSize = 18;
 var fontLargeSize = 48;
-var offsetX = 2*wd + gutterX;
+var offsetX = 2 * wd + gutterX;
 var offsetY = 2 * gutterY;
 
 
@@ -37,11 +38,11 @@ var offsetY = 2 * gutterY;
 
 
 async function insertTextFromFileHandler(selection) {
+    var i, j;
+    // TODO get existing assets colours and use first four as row fills
 
-    // TODO get existing assets colours and use frist frou as row fills
-
-    const aFile = await fs.getFileForOpening({ types: ["txt","csv"] });
-    if (!aFile){
+    const aFile = await fs.getFileForOpening({ types: ["txt", "csv"] });
+    if (!aFile) {
         return;
     }
 
@@ -52,24 +53,25 @@ async function insertTextFromFileHandler(selection) {
     drawSidePanel(arr, selection);
 
     var rows = arr.length;
-    for (var j=5; j<rows; j++){
-
-        var cols = arr[j].length;
+    var cols;
+    var text;
+    for (j = 5; j < rows; j++) {
+        cols = arr[j].length;
         // process the emotions with emoticons
-        if(j===7){
+        if (j === 7) {
             drawEmotions(arr[j], selection);
         }
 
         // double ht line for journey emotions
-        if(j===8){
+        if (j === 8) {
             offsetY = offsetY + ht;
         }
 
-        for (var i=0; i<cols; i++){
-            if(i==0){
+        for (i = 0; i < cols; i++) {
+            if (i == 0) {
                 // add header
                 var str = String(arr[j][i]).toUpperCase();
-                const text = new Text();
+                text = new Text();
                 text.text = str;
                 text.styleRanges = [{
                     length: str.length,
@@ -77,13 +79,13 @@ async function insertTextFromFileHandler(selection) {
                     fontSize: fontHeaderSize
                 }];
                 selection.insertionParent.addChild(text);
-                text.moveInParentCoordinates( offsetX +(gutterX+(i)*(wd+gutterX)), offsetY - 2*gutterX+ (j-4)*(ht+gutterY) );
+                text.moveInParentCoordinates(offsetX + (gutterX + (i) * (wd + gutterX)), offsetY - 2 * gutterX + (j - 4) * (ht + gutterY));
             }
 
-            if(arr[j][i]!==null && i>0 && j!==7){
+            if (arr[j][i] !== null && i > 0 && j !== 7) {
                 var str = String(arr[j][i]); // cast to string so we can get length
-                const text = new Text();
-                text.areaBox = {width:wd-gutterX*3, height:ht};
+                text = new Text();
+                text.areaBox = { width: wd - gutterX * 3, height: ht };
                 text.text = str;
                 text.styleRanges = [{
                     length: str.length,
@@ -94,14 +96,14 @@ async function insertTextFromFileHandler(selection) {
                 const rect = new Rectangle();
                 rect.width = wd;
                 rect.height = ht;
-                rect.fill = new Color(rowColor[j-5][1]);
+                rect.fill = new Color(rowColor[j - 5][1]);
                 rect.stroke = null;
 
                 selection.insertionParent.addChild(rect);
-                rect.moveInParentCoordinates( offsetX +((i-1)*(wd+gutterX)), (offsetY + (j-4)* (ht+gutterY)) );
+                rect.moveInParentCoordinates(offsetX + ((i - 1) * (wd + gutterX)), (offsetY + (j - 4) * (ht + gutterY)));
 
                 selection.insertionParent.addChild(text);
-                text.moveInParentCoordinates( offsetX +(gutterX+(i-1)*(wd+gutterX)), offsetY + 2*gutterX+ (j-4)*(ht+gutterY) );
+                text.moveInParentCoordinates(offsetX + (gutterX + (i - 1) * (wd + gutterX)), offsetY + 2 * gutterX + (j - 4) * (ht + gutterY));
 
             }
 
@@ -111,18 +113,20 @@ async function insertTextFromFileHandler(selection) {
 
 
 function drawEmotions(arr, selection) {
+    var i, j;
     var len = arr.length;
 
-    for (var i=1; i<len; i++){
-        const circ = new Ellipse ();
+    for (i = 1; i < len; i++) {
+        const circ = new Ellipse();
         const value = parseInt(arr[i]);
-        circ.radiusX  = wd/5;
-        circ.radiusY  = wd/5;
+        circ.radiusX = wd / 5;
+        circ.radiusY = wd / 5;
         circ.fill = new Color(trafficLights[value][1]);
-        circ.stroke = null;
+        circ.stroke = new Color('white');
+        circ.strokeWidth = 10;
 
         selection.insertionParent.addChild(circ);
-        circ.moveInParentCoordinates( offsetX +((i-1)*(wd+gutterX)) + wd/2 - wd/5, (offsetY + (3)* (ht+gutterY)) + value*ht/5 );
+        circ.moveInParentCoordinates(offsetX + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5, (offsetY + (3) * (ht + gutterY)) + value * ht / 5);
     }
 
 }
@@ -131,48 +135,49 @@ function drawEmotions(arr, selection) {
 function drawSidePanel(arr, selection) {
     const len = 5; // get first four rows to use as side-bar content
     const rect = new Rectangle();
-    rect.width = wd*2;
-    rect.height = 1920; // TODO get artboard ht
+    rect.width = wd * 2;
+    rect.height = 1080;
     rect.fill = new Color("#6f777b");
     rect.stroke = null;
     rect.opacity = 1;
     selection.insertionParent.addChild(rect);
     //persona icon placeholder
-    const circ = new Ellipse ();
-    circ.radiusX  = wd/2-gutterX;
-    circ.radiusY  = wd/2-gutterX;
+    const circ = new Ellipse();
+    circ.radiusX = wd / 2 - gutterX;
+    circ.radiusY = wd / 2 - gutterX;
     circ.fill = null;
     circ.stroke = new Color('#dee0e2');
+    circ.strokeWidth = 3;
     selection.insertionParent.addChild(circ);
-    circ.moveInParentCoordinates( gutterX+wd/2, gutterX );
+    circ.moveInParentCoordinates(gutterX + wd / 2, gutterX);
 
     // use Persona value as page title
-    var str = String(arr[0][1])
-    const text = new Text();
+    var str = String(arr[0][1]);
+    var text = new Text();
     text.text = str;
     text.styleRanges = [{
         length: str.length,
-        fill: new Color(textFill[1]),
+        fill: new Color(textFillDark[1]),
         fontSize: fontLargeSize
     }];
 
     selection.insertionParent.addChild(text);
-    text.moveInParentCoordinates( (offsetX + gutterX), (gutterY + ht/2) );
+    text.moveInParentCoordinates((offsetX + gutterX), (gutterY + ht / 2));
+    var i, j, displayFont;
 
-    for (var j=1; j<len; j++){
-        var displayFont;
-        for (var i=0; i<len; i++){
+    for (j = 1; j < len; j++) {
+        for (i = 0; i < len; i++) {
             // TODO: loop thru items and built a bullet list
             // add as an areabox.
             // get height?
-            if(arr[j][i]!==null){``
-                var str = String(arr[j][i]);
-                if(i===0){
+            if (arr[j][i] !== null) {
+                str = String(arr[j][i]);
+                if (i === 0) {
                     displayFont = fontHeaderSize;
-                }else{
+                } else {
                     displayFont = fontSize;
                 }
-                const text = new Text();
+                text = new Text();
                 text.text = str;
                 text.styleRanges = [{
                     length: str.length,
@@ -182,7 +187,7 @@ function drawSidePanel(arr, selection) {
                 }];
 
                 selection.insertionParent.addChild(text);
-                text.moveInParentCoordinates( gutterX, ((i*16)+ (j*(ht+gutterY*3))) );
+                text.moveInParentCoordinates(gutterX, ((i * 16) + (j * (ht + gutterY * 3))));
             }
         }
     }
