@@ -3,10 +3,7 @@ const { Rectangle, Ellipse , Text, Color } = require("scenegraph");
 const assets = require("assets");
 const CSV = require("./csv");
 const fs = require("uxp").storage.localFileSystem;
-
-
 const textFill = ["grey-3", '#dee0e2'];
-
 const trafficLights =[
     ["green", '#006435'],
     ["green (button)", '#00823b'],
@@ -41,8 +38,7 @@ var offsetY = 2 * gutterY;
 
 async function insertTextFromFileHandler(selection) {
 
-    //addPalette();
-    //allColors = assets.colors.get();
+    // TODO get existing assets colours and use frist frou as row fills
 
     const aFile = await fs.getFileForOpening({ types: ["txt","csv"] });
     if (!aFile){
@@ -55,26 +51,18 @@ async function insertTextFromFileHandler(selection) {
     // draw side panel
     drawSidePanel(arr, selection);
 
-
-    //console.log(arr);
     var rows = arr.length;
     for (var j=5; j<rows; j++){
 
         var cols = arr[j].length;
-        //process the first column as bullets
+        // process the emotions with emoticons
         if(j===7){
-            // process the emotions with emoticons
-                //if(arr[j][0]==="emotion"){
-                    drawEmotions(arr[j], selection);
-
-               // }
+            drawEmotions(arr[j], selection);
         }
-
 
         // double ht line for journey emotions
         if(j===8){
             offsetY = offsetY + ht;
-            console.log('double', offsetY);
         }
 
         for (var i=0; i<cols; i++){
@@ -82,12 +70,10 @@ async function insertTextFromFileHandler(selection) {
                 // add header
                 var str = String(arr[j][i]).toUpperCase();
                 const text = new Text();
-                //text.areaBox = {width:wd-gutterX*3, height:ht};
                 text.text = str;
                 text.styleRanges = [{
                     length: str.length,
                     fill: new Color("black"),
-                    //fill: new Color("#6f777b"),
                     fontSize: fontHeaderSize
                 }];
                 selection.insertionParent.addChild(text);
@@ -96,7 +82,6 @@ async function insertTextFromFileHandler(selection) {
 
             if(arr[j][i]!==null && i>0 && j!==7){
                 var str = String(arr[j][i]); // cast to string so we can get length
-
                 const text = new Text();
                 text.areaBox = {width:wd-gutterX*3, height:ht};
                 text.text = str;
@@ -111,7 +96,6 @@ async function insertTextFromFileHandler(selection) {
                 rect.height = ht;
                 rect.fill = new Color(rowColor[j-5][1]);
                 rect.stroke = null;
-                //rect.opacity = 0.8;
 
                 selection.insertionParent.addChild(rect);
                 rect.moveInParentCoordinates( offsetX +((i-1)*(wd+gutterX)), (offsetY + (j-4)* (ht+gutterY)) );
@@ -127,8 +111,6 @@ async function insertTextFromFileHandler(selection) {
 
 
 function drawEmotions(arr, selection) {
-    console.log('------ drawEmotions ------');
-    console.log(arr);
     var len = arr.length;
 
     for (var i=1; i<len; i++){
@@ -136,10 +118,8 @@ function drawEmotions(arr, selection) {
         const value = parseInt(arr[i]);
         circ.radiusX  = wd/5;
         circ.radiusY  = wd/5;
-
         circ.fill = new Color(trafficLights[value][1]);
         circ.stroke = null;
-        circ.opacity = 0.8;
 
         selection.insertionParent.addChild(circ);
         circ.moveInParentCoordinates( offsetX +((i-1)*(wd+gutterX)) + wd/2 - wd/5, (offsetY + (3)* (ht+gutterY)) + value*ht/5 );
@@ -149,7 +129,7 @@ function drawEmotions(arr, selection) {
 
 
 function drawSidePanel(arr, selection) {
-    const len = 5;// get first four rows with side bar content
+    const len = 5; // get first four rows to use as side-bar content
     const rect = new Rectangle();
     rect.width = wd*2;
     rect.height = 1920; // TODO get artboard ht
@@ -169,7 +149,6 @@ function drawSidePanel(arr, selection) {
     // use Persona value as page title
     var str = String(arr[0][1])
     const text = new Text();
-    //text.areaBox = {width:wd-gutterX*3, height:ht};
     text.text = str;
     text.styleRanges = [{
         length: str.length,
@@ -183,7 +162,7 @@ function drawSidePanel(arr, selection) {
     for (var j=1; j<len; j++){
         var displayFont;
         for (var i=0; i<len; i++){
-            // TODO: loop thru itema and built a bullet list
+            // TODO: loop thru items and built a bullet list
             // add as an areabox.
             // get height?
             if(arr[j][i]!==null){``
@@ -194,7 +173,6 @@ function drawSidePanel(arr, selection) {
                     displayFont = fontSize;
                 }
                 const text = new Text();
-                //text.areaBox = {width:wd-gutterX*3, height:ht};
                 text.text = str;
                 text.styleRanges = [{
                     length: str.length,
