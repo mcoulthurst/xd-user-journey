@@ -1,6 +1,5 @@
 'use strict';
 const { Rectangle, Ellipse, Text, Color } = require("scenegraph");
-const assets = require("assets");
 const CSV = require("./csv");
 const fs = require("uxp").storage.localFileSystem;
 const textFill = ["grey-3", '#dee0e2'];
@@ -23,6 +22,17 @@ const rowColor = [
     ["bright-red", '#df3034']
 ];
 
+const palette = [
+    ["Midnight Blue", '#2c3e50'],
+    ["Belize Hole", '#2980b9'],
+    ["Wisteria", '#8e44ad'],
+    ["Pumpkin", '#d35400'],
+    ["Pomegranate", '#c0391b'],
+    ["Nephritis", '#27ae60'],
+    ["Peter River", '#3498db'],
+    ["Emerald", '#2ecc71']
+];
+
 const ht = 100;
 const wd = 160;
 const gutterX = 5;
@@ -31,11 +41,40 @@ var fontSize = 12;
 var fontHeaderSize = 18;
 var fontLargeSize = 48;
 var offsetX = 2 * wd + gutterX;
-var offsetY = 2 * gutterY;
+var offsetY = 110;
+var assets = require("assets");
+var allColors;
 
 
 
+function getAssetPalette(){
+    allColors = assets.colors.get();
+    console.log(allColors);
+    if (allColors.length<4){
+        addPalette(palette);
+    }
+    allColors = assets.colors.get();
+}
 
+function addPalette(arr) {
+    var i = 0;
+    var len = arr.length;
+    for (i=0; i<len; i++){
+        addColor(arr[i])
+    }
+}
+
+
+function addColor(array) {
+    var assets = require("assets");
+    var label = array[0] + ' ('+array[1]+')';
+    var color = new Color(array[1]);
+    console.log('add ' + label);
+    assets.colors.add([
+        { name: label, color: color }
+    ]);
+
+}
 
 async function insertTextFromFileHandler(selection) {
     var i, j;
@@ -48,6 +87,7 @@ async function insertTextFromFileHandler(selection) {
 
     const contents = await aFile.read();
     const arr = CSV.parse(contents);
+    getAssetPalette();
 
     // draw side panel
     drawSidePanel(arr, selection);
@@ -96,14 +136,15 @@ async function insertTextFromFileHandler(selection) {
                 const rect = new Rectangle();
                 rect.width = wd;
                 rect.height = ht;
-                rect.fill = new Color(rowColor[j - 5][1]);
+                console.log(j, allColors[j-5]);
+                rect.fill = new Color(allColors[j - 5].color);
                 rect.stroke = null;
 
                 selection.insertionParent.addChild(rect);
                 rect.moveInParentCoordinates(offsetX + ((i - 1) * (wd + gutterX)), (offsetY + (j - 4) * (ht + gutterY)));
 
                 selection.insertionParent.addChild(text);
-                text.moveInParentCoordinates(offsetX + (gutterX + (i - 1) * (wd + gutterX)), offsetY + 2 * gutterX + (j - 4) * (ht + gutterY));
+                text.moveInParentCoordinates(offsetX + (gutterX + (i - 1) * (wd + gutterX)), offsetY  + (j - 4) * (ht + gutterY) + 2* gutterX);
 
             }
 
@@ -149,7 +190,7 @@ function drawSidePanel(arr, selection) {
     circ.stroke = new Color('#dee0e2');
     circ.strokeWidth = 3;
     selection.insertionParent.addChild(circ);
-    circ.moveInParentCoordinates(gutterX + wd / 2, gutterX);
+    circ.moveInParentCoordinates(gutterX + wd / 2, gutterY);
 
     // use Persona value as page title
     var str = String(arr[0][1]);
@@ -162,7 +203,7 @@ function drawSidePanel(arr, selection) {
     }];
 
     selection.insertionParent.addChild(text);
-    text.moveInParentCoordinates((offsetX + gutterX), (gutterY + ht / 2));
+    text.moveInParentCoordinates((offsetX + gutterX), (2*gutterY + ht / 2));
     var i, j, displayFont;
 
     for (j = 1; j < len; j++) {
@@ -183,11 +224,13 @@ function drawSidePanel(arr, selection) {
                     length: str.length,
                     fill: new Color(textFill[1]),
                     fontSize: displayFont,
-                    fontStyle: 'bold'
+                    //fontStyle: 'bold'
                 }];
 
                 selection.insertionParent.addChild(text);
-                text.moveInParentCoordinates(gutterX, ((i * 16) + (j * (ht + gutterY * 3))));
+                text.moveInParentCoordinates(gutterX, offsetY - 2 * gutterX + j * (ht + gutterY) + i*16 );
+
+
             }
         }
     }
