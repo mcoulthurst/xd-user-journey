@@ -1,40 +1,47 @@
 {
-  "summary" : "Brief summary, 3-30 characters",
-  "website" : "https://mywebsite.com",
-  "keywords" : [ "array", "of", "keywords", "min 2 characters per keyword", "max total length 100 characters" ],
-  "languages" : [ "en", "de", "fr", "ja", "ko", "zh", "es", "pt" ],
-  "author" : "No more than 40 characters",
-  "description" : "This describes the plugin. If included it must contain at least 3 characters and no more than 1000 characters.",
-  "helpUrl" : "https://mywebsite.com/help",
-  "main" : "main.js",
-  "icons" : [ {
-    "path" : "images/pluginIcon1.png",
-    "width" : 48,
-    "height" : 48
-  }, {
-    "path" : "images/pluginIcon2.png",
-    "width" : 96,
-    "height" : 96
-  }, {
-    "path" : "images/pluginIcon3.png",
-    "width" : 144,
-    "height" : 144
-  }, {
-    "path" : "images/pluginIcon4.png",
-    "width" : 192,
-    "height" : 192
-  } ],
-  "version" : "1.0.0",
-  "releaseNotes" : "Release notes for the plugin version, at least 3 characters and no more than 1000 characters",
-  "name" : "user journey",
-  "host" : {
-    "app" : "XD",
-    "minVersion" : "13.0"
-  },
-  "id" : "d95c6ba8",
-  "uiEntryPoints" : [ {
-    "label" : "Load file",
-    "type" : "menu",
-    "commandId" : "insertTextFromFileCommand"
-  } ]
+    "summary": "Create user journey map from CSV text file",
+    "website": "https://github.com/mcoulthurst/xd-user-journey",
+    "keywords": ["user-journey", "journey", "user", "UI", "UX", "UX/UI", "mapping", "dynamic data", "CSV"],
+    "languages": ["en"],
+    "author": "Martin Coulthurst",
+    "description": "This plugin renders a user journey map from external CSV text data. The aim is to quickly mock up a user journey using key text fields. The diagram can then be customised to suit.",
+    "helpUrl": "https://github.com/mcoulthurst/xd-user-journey/blob/master/README.md",
+    "main": "main.js",
+    "icons": [
+    {
+        "path": "images/icon1x.png",
+        "width": 48,
+        "height": 48
+    },
+    {
+        "path": "images/icon2x.png",
+        "width": 96,
+        "height": 96
+    },
+    {
+        "path": "images/icon3x.png",
+        "width": 144,
+        "height": 144
+    },
+    {
+        "path": "images/icon4x.png",
+        "width": 192,
+        "height": 192
+    }],
+    "version": "1.0.0",
+    "releaseNotes": "Initial release",
+    "name": "user journey",
+    "host":
+    {
+        "app": "XD",
+        "minVersion": "13.0"
+    },
+    "id": "d95c6ba8",
+    "uiEntryPoints": [
+    {
+        "type": "menu",
+        "label": "User Journey",
+        "commandId" : "createUserJourney",
+        "shortcut": { "mac": "Cmd+Shift+U", "win": "Ctrl+Shift+U" }
+    }]
 }
