@@ -1,4 +1,5 @@
 'use strict';
+const { alert, error } = require("./lib/dialogs.js");
 const { Line, Rectangle, Ellipse, Text, Color } = require("scenegraph");
 const CSV = require("./csv");
 const fs = require("uxp").storage.localFileSystem;
@@ -53,10 +54,9 @@ async function createUserJourney(selection) {
     const arr = CSV.parse(contents);
     offsetY = 110;
     getAssetPalette();
-    console.log(arr);
 
     if(arr.length<6){
-        console.log('WARNING');
+        showError();
     }else{
 
 
@@ -107,7 +107,6 @@ async function createUserJourney(selection) {
                     const rect = new Rectangle();
                     rect.width = wd;
                     rect.height = ht;
-                    console.log(j-5, allColors[j-5]);
                     rect.fill = new Color(allColors[j - 5].color);
                     rect.stroke = null;
 
@@ -237,6 +236,16 @@ function drawSidePanel(arr, selection) {
     }
 
 }
+
+
+async function showError() {
+    /* we'll display a dialog here */
+    await error("CSV File Import Failed",
+        "Failed to load the selected file. Please check the file format:",
+        "* There needs to be 5 rows: for Persona, Roles, Goals, Needs and Expectations",
+        "* Then there needs to be 6 rows: for Tasks, Persona, Emotion, Touch points and Pain points",
+        "* See the plugin help page for more information");}
+
 
 // palette utilities
 function getAssetPalette(){
