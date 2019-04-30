@@ -49,10 +49,10 @@ var allColors;
 
 function getAssetPalette(){
     allColors = assets.colors.get();
-    console.log(allColors);
     if (allColors.length<4){
         addPalette(palette);
     }
+    //update the reference
     allColors = assets.colors.get();
 }
 
@@ -136,7 +136,6 @@ async function insertTextFromFileHandler(selection) {
                 const rect = new Rectangle();
                 rect.width = wd;
                 rect.height = ht;
-                console.log(j, allColors[j-5]);
                 rect.fill = new Color(allColors[j - 5].color);
                 rect.stroke = null;
 
@@ -165,7 +164,6 @@ function drawEmotions(arr, selection) {
         y = (offsetY + (3) * (ht + gutterY)) + value * ht / 5;
 
         //add line back to previous item
-        console.log(lastX, lastY);
         if(lastX!==null){
             const line = new Line();
 
