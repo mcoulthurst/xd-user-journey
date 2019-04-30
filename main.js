@@ -1,5 +1,5 @@
 'use strict';
-const { Rectangle, Ellipse, Text, Color } = require("scenegraph");
+const { Line, Rectangle, Ellipse, Text, Color } = require("scenegraph");
 const CSV = require("./csv");
 const fs = require("uxp").storage.localFileSystem;
 const textFill = ["grey-3", '#dee0e2'];
@@ -69,7 +69,6 @@ function addColor(array) {
     var assets = require("assets");
     var label = array[0] + ' ('+array[1]+')';
     var color = new Color(array[1]);
-    console.log('add ' + label);
     assets.colors.add([
         { name: label, color: color }
     ]);
@@ -87,6 +86,7 @@ async function insertTextFromFileHandler(selection) {
 
     const contents = await aFile.read();
     const arr = CSV.parse(contents);
+    offsetY = 110;
     getAssetPalette();
 
     // draw side panel
@@ -152,22 +152,57 @@ async function insertTextFromFileHandler(selection) {
     }
 }
 
-
+// do two loops one to set line beneath all circles
 function drawEmotions(arr, selection) {
     var i, j;
+    var x, y;
+    var lastX = null;
+    var lastY = null;
     var len = arr.length;
+    for (i = 1; i < len; i++) {
+        const value = parseInt(arr[i]);
+        x = offsetX + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
+        y = (offsetY + (3) * (ht + gutterY)) + value * ht / 5;
+
+        //add line back to previous item
+        console.log(lastX, lastY);
+        if(lastX!==null){
+            const line = new Line();
+
+            line.setStartEnd(
+                x + wd/5,
+                y + wd/5,
+                lastX + wd/5,   // correct for anchor point of ellipse
+                lastY + wd/5
+            );
+
+            line.strokeEnabled = true;
+            line.stroke = new Color("black");
+            line.strokeWidth = 3;
+
+            selection.insertionParent.addChild(line);
+            //selection.editContext.addChild(line);
+        }
+        lastX = x;
+        lastY = y;
+    }
+
 
     for (i = 1; i < len; i++) {
-        const circ = new Ellipse();
         const value = parseInt(arr[i]);
+        x = offsetX + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
+        y = (offsetY + (3) * (ht + gutterY)) + value * ht / 5;
+        const circ = new Ellipse();
+
         circ.radiusX = wd / 5;
         circ.radiusY = wd / 5;
         circ.fill = new Color(trafficLights[value][1]);
         circ.stroke = new Color('white');
         circ.strokeWidth = 10;
 
+
         selection.insertionParent.addChild(circ);
-        circ.moveInParentCoordinates(offsetX + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5, (offsetY + (3) * (ht + gutterY)) + value * ht / 5);
+        circ.moveInParentCoordinates(x, y);
     }
 
 }
