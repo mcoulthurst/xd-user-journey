@@ -23,7 +23,7 @@ row 10: Pain points
 It is intended that common graphics are used for the personas, with multiple artboards used for each persona in the service.
 
 ## To do
-* Automatically re-size the artborad based on the length of the user journey
+* Automatically re-size the artboard based on the length of the user journey
 * Use custom emoticons for the emotions in the journey
 * Structure the generated drawing to improve editing
 * Format the side panel text with bullet lists
