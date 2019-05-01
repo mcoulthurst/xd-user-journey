@@ -1,10 +1,10 @@
 {
-    "summary": "Create user journey map from CSV text file",
+    "summary": "Create user journey via CSV",
     "website": "https://github.com/mcoulthurst/xd-user-journey",
     "keywords": ["user-journey", "journey", "user", "UI", "UX", "UX/UI", "mapping", "dynamic data", "CSV"],
     "languages": ["en"],
     "author": "Martin Coulthurst",
-    "description": "This plugin renders a user journey map from external CSV text data. The aim is to quickly mock up a user journey using key text fields. The diagram can then be customised to suit.",
+    "description": "This plugin renders a user journey map from external CSV text data. The aim is to quickly mock up a user journey using key text fields. By loading a CSV file containing the basci content for th emap , the plugin generates an outline map. The diagram can then be further customised to suit.",
     "helpUrl": "https://github.com/mcoulthurst/xd-user-journey/blob/master/README.md",
     "main": "main.js",
     "icons": [
@@ -30,7 +30,7 @@
     }],
     "version": "1.0.0",
     "releaseNotes": "Initial release",
-    "name": "user journey",
+    "name": "User journey",
     "host":
     {
         "app": "XD",

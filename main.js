@@ -1,7 +1,7 @@
 'use strict';
 const { alert, error } = require("./lib/dialogs.js");
 const { Line, Rectangle, Ellipse, Text, Color } = require("scenegraph");
-const CSV = require("./csv");
+const CSV = require("./lib/csv");
 const fs = require("uxp").storage.localFileSystem;
 var assets = require("assets");
 
