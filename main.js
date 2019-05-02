@@ -21,10 +21,7 @@ const palette = [
     ["Belize Hole", '#2980b9'],
     ["Wisteria", '#8e44ad'],
     ["Pumpkin", '#d35400'],
-    ["Pomegranate", '#c0391b'],
-    ["Nephritis", '#27ae60'],
-    ["Peter River", '#3498db'],
-    ["Emerald", '#2ecc71']
+    ["Pomegranate", '#c0391b']
 ];
 
 const ht = 100;
@@ -78,10 +75,13 @@ async function createUserJourney(selection) {
                 offsetY = offsetY + ht;
             }
 
+            var str = " ";
             for (i = 0; i < cols; i++) {
                 if (i == 0) {
                     // add header
-                    var str = String(arr[j][i]).toUpperCase();
+                    if (arr[j][i] !== null){
+                        str = String(arr[j][i]);
+                    }
                     text = new Text();
                     text.text = str;
                     text.styleRanges = [{
@@ -128,9 +128,15 @@ function drawEmotions(arr, selection) {
     var x, y;
     var lastX = null;
     var lastY = null;
+    var value;
     var len = arr.length;
     for (i = 1; i < len; i++) {
-        const value = parseInt(arr[i]);
+        // default value
+        value = 1;
+        if(arr[i]!==null){
+            value = parseInt(arr[i]);
+        }
+
         x = offsetX + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
         y = (offsetY + (3) * (ht + gutterY)) + value * ht / 5;
 
@@ -157,7 +163,11 @@ function drawEmotions(arr, selection) {
     }
 
     for (i = 1; i < len; i++) {
-        const value = parseInt(arr[i]);
+        // default value
+        value = 1;
+        if(arr[i]!==null){
+            value = parseInt(arr[i]);
+        }
         x = offsetX + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
         y = (offsetY + (3) * (ht + gutterY)) + value * ht / 5;
         const circ = new Ellipse();
@@ -194,7 +204,10 @@ function drawSidePanel(arr, selection) {
     circ.moveInParentCoordinates(gutterX + wd / 2, gutterY);
 
     // use Persona value as page title
-    var str = String(arr[0][1]);
+    var str = "User";
+    if(arr[0][1]!==null){
+        str = String(arr[0][1]);
+    }
     var text = new Text();
     text.text = str;
     text.styleRanges = [{
