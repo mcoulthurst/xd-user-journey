@@ -28,8 +28,8 @@
         "width": 192,
         "height": 192
     }],
-    "version": "1.0.0",
-    "releaseNotes": "Initial release",
+    "version": "1.0.1",
+    "releaseNotes": "Fixed issue with missing content for text fields.",
     "name": "User journey",
     "host":
     {
