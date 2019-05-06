@@ -21,7 +21,29 @@ const palette = [
     ["Belize Hole", '#2980b9'],
     ["Wisteria", '#8e44ad'],
     ["Pumpkin", '#d35400'],
-    ["Pomegranate", '#c0391b']
+    ["Pomegranate", '#c0391b'],
+    ["grey-4", '#f8f8f8'],
+    ["grey-3", '#dee0e2'],
+    ["grey-2", '#bfc1c3'],
+    ["grey-1", '#6f777b'],
+    ["black", '#0b0c0c'],
+    ["blue", '#005ea5'],
+    ["light-blue", '#2b8cc4'],
+    ["turquoise", '#28a197'],
+    ["green", '#006435'],
+    ["green button", '#00823b'],
+    ["light-green", '#85994b'],
+    ["yellow", '#ffbf47'],
+    ["brown", '#b58840'],
+    ["orange", '#f47738'],
+    ["bright-red", '#df3034'],
+    ["red", '#b10e1e'],
+    ["light-pink", '#f499be'],
+    ["pink", '#d53880'],
+    ["bright-purple", '#912b88'],
+    ["light-purple", '#6f72af'],
+    ["purple", '#2e358b'],
+    ["deep purple", '#4c2c92']
 ];
 
 const ht = 100;
@@ -52,8 +74,10 @@ async function createUserJourney(selection) {
     offsetY = 110;
     getAssetPalette();
 
-    if(arr.length<6){
-        showError();
+    if(arr.length<6 ){
+        showError('Not enough Data');
+    }else if(arr.length>20 ){
+        showError('Too Many Rows');
     }else{
 
 
@@ -79,7 +103,7 @@ async function createUserJourney(selection) {
             for (i = 0; i < cols; i++) {
                 if (i == 0) {
                     // add header
-                    if (arr[j][i] !== null){
+                    if (arr[j][i] !== null && arr[j][i] !== ""){
                         str = String(arr[j][i]);
                     }
                     text = new Text();
@@ -94,15 +118,17 @@ async function createUserJourney(selection) {
                 }
 
                 if (arr[j][i] !== null && i > 0 && j !== 7) {
-                    var str = String(arr[j][i]); // cast to string so we can get length
-                    text = new Text();
-                    text.areaBox = { width: wd - gutterX * 3, height: ht };
-                    text.text = str;
-                    text.styleRanges = [{
-                        length: str.length,
-                        fill: new Color(textFill[1]),
-                        fontSize: fontSize
-                    }];
+                    if (arr[j][i] !== "") {
+                        var str = String(arr[j][i]); // cast to string so we can get length
+                        text = new Text();
+                        text.areaBox = { width: wd - gutterX * 3, height: ht };
+                        text.text = str;
+                        text.styleRanges = [{
+                            length: str.length,
+                            fill: new Color(textFill[1]),
+                            fontSize: fontSize
+                        }];
+                    }
 
                     const rect = new Rectangle();
                     rect.width = wd;
@@ -113,9 +139,10 @@ async function createUserJourney(selection) {
                     selection.insertionParent.addChild(rect);
                     rect.moveInParentCoordinates(offsetX + ((i - 1) * (wd + gutterX)), (offsetY + (j - 4) * (ht + gutterY)));
 
-                    selection.insertionParent.addChild(text);
-                    text.moveInParentCoordinates(offsetX + (gutterX + (i - 1) * (wd + gutterX)), offsetY  + (j - 4) * (ht + gutterY) + 2* gutterX);
-
+                    if (arr[j][i] !== "") {
+                        selection.insertionParent.addChild(text);
+                        text.moveInParentCoordinates(offsetX + (gutterX + (i - 1) * (wd + gutterX)), offsetY  + (j - 4) * (ht + gutterY) + 2* gutterX);
+                    }
                 }
             }
         }
@@ -205,7 +232,7 @@ function drawSidePanel(arr, selection) {
 
     // use Persona value as page title
     var str = "User";
-    if(arr[0][1]!==null){
+    if(arr[0][1]!==null && arr[0][1]!==""){
         str = String(arr[0][1]);
     }
     var text = new Text();
@@ -225,7 +252,7 @@ function drawSidePanel(arr, selection) {
             // TODO: loop thru items and built a bullet list
             // add as an areabox.
             // get height?
-            if (arr[j][i] !== null) {
+            if (arr[j][i] !== null && arr[j][i] !== "") {
                 str = String(arr[j][i]);
                 if (i === 0) {
                     displayFont = fontHeaderSize;
@@ -251,9 +278,9 @@ function drawSidePanel(arr, selection) {
 }
 
 
-async function showError() {
+async function showError(header) {
     /* we'll display a dialog here */
-    await error("CSV File Import Failed",
+    await error("CSV File Import Failed: " + header,
         "Failed to load the selected file. Please check the file format:",
         "* There needs to be 5 rows: for Persona, Roles, Goals, Needs and Expectations",
         "* Then there needs to be 6 rows: for Tasks, Persona, Emotion, Touch points and Pain points",
