@@ -30,3 +30,4 @@ It is intended that common graphics are used for the personas, with multiple art
 
 ## Example screenshot
 ![User Journey Screenshot](screenshot.png)
+![version 2 layout](journey.v2.png)
