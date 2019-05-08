@@ -13,6 +13,7 @@ const palette = [
     ["Side Text", '#DEE0E2'],
     ["Tasks", '#A7488C'],
     ["Personas", '#35C0BD'],
+    [],
     ["Touch Points", '#2C3E50'],
     ["Pain Points", '#F15159'],
     ["Dark Text", '#4C4743']
@@ -21,11 +22,11 @@ const palette = [
 const sidePanelFill = palette[0][1];
 const sidePanelText = palette[1][1];
 const titleText = '#ffffff';
-const defaultText = palette[6][1];
+const defaultText = palette[7][1];
 
 
 
-const ht_row = 170;
+var ht_row = 170;
 const wd_row = 30;
 const wd_full = 1920;
 const wd_offset = 330;
@@ -74,6 +75,7 @@ async function createUserJourney(selection) {
     }
 }
 
+
 function drawJourney(arr, selection) {
     console.log(arr);
     var rows = arr.length;
@@ -88,43 +90,51 @@ function drawJourney(arr, selection) {
         row_x = wd_offset + gutter + wd_row;
         row_y = ht_offset + j * (ht_row + gutter);
 
-        // draw row
-        var rect = new Rectangle();
-        rect.width = wd_full;
-        rect.height = ht_row;
-        rect.fill = new Color(palette[j+2][1], 0.1);
-        rect.stroke = null;
-        selection.insertionParent.addChild(rect);
-        rect.moveInParentCoordinates(row_x, row_y );
-
-        // draw header
-        var rect = new Rectangle();
-        rect.width = wd_row;
-        rect.height = ht_row;
-        rect.fill = new Color(palette[j+2][1]);
-        rect.stroke = null;
-        selection.insertionParent.addChild(rect);
-        // NB x position of tile block is offset
-        rect.moveInParentCoordinates(wd_offset, row_y);
-
-        // row title text
-
-        // add a node and rotate 270 degrees
-
-        if (arr[j][0] !== null && arr[j][0] !== ""){
-            str = String(arr[j][0]);
+        if (j === 2){
+            ht_row = 340;
+        }else{
+            ht_row = 170
         }
-        text = new Text();
-        text.text = str;
-        text.styleRanges = [{
-            length: str.length,
-            fill: new Color(titleText),
-            fontSize: fontHeaderSize
-        }];
 
-        selection.insertionParent.addChild(text);
-        text.moveInParentCoordinates(wd_offset, (ht_offset + j * (ht_row + gutter)));
-console.log(arr);
+        if (j !== 3){
+            // draw row
+            var rect = new Rectangle();
+            rect.width = wd_full;
+            rect.height = ht_row;
+            rect.fill = new Color(palette[j+2][1], 0.1);
+            rect.stroke = null;
+            selection.insertionParent.addChild(rect);
+            rect.moveInParentCoordinates(row_x, row_y );
+
+            // draw header
+            var rect = new Rectangle();
+            rect.width = wd_row;
+            rect.height = ht_row;
+            rect.fill = new Color(palette[j+2][1]);
+            rect.stroke = null;
+            selection.insertionParent.addChild(rect);
+            // NB x position of tile block is offset
+            rect.moveInParentCoordinates(wd_offset, row_y);
+
+            // row title text
+
+            // add a node and rotate 270 degrees
+
+            if (arr[j][0] !== null && arr[j][0] !== ""){
+                str = String(arr[j][0]);
+            }
+            text = new Text();
+            text.text = str;
+            text.styleRanges = [{
+                length: str.length,
+                fill: new Color(titleText),
+                fontSize: fontHeaderSize
+            }];
+
+            selection.insertionParent.addChild(text);
+            text.moveInParentCoordinates(wd_offset, (ht_offset + j * (ht_row + gutter)));
+        }
+
         if (j === 2){
             // add emotion points
             drawEmotions(arr[2], selection);
@@ -159,13 +169,13 @@ console.log(arr);
 
 // do two loops one to set line beneath all circles
 function drawEmotions(arr, selection) {
-    console.log(arr);
     var i, j;
     var x, y;
     var lastX = null;
     var lastY = null;
     var value;
     var len = arr.length;
+    var offsetChart = (wd - gutterX * 3)/2;
 
     let lines = [];
     for (i = 1; i < len; i++) {
@@ -175,8 +185,8 @@ function drawEmotions(arr, selection) {
             value = parseInt(arr[i]);
         }
 
-        x = offsetX + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
-        y = (offsetY + (3) * (ht + gutterY)) + value * ht / 5;
+        x = offsetX + offsetChart + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
+        y = (offsetY + 3 * (ht + gutterY)) + value * ht_row / 5;
 
         //add line back to previous item
         if(lastX!==null){
@@ -212,8 +222,8 @@ function drawEmotions(arr, selection) {
         if(arr[i]!==null){
             value = parseInt(arr[i]);
         }
-        x = offsetX + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
-        y = (offsetY + (3) * (ht + gutterY)) + value * ht / 5;
+        x = offsetX + offsetChart + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
+        y = (offsetY + (3) * (ht + gutterY)) + value * ht_row / 5;
         const circ = new Ellipse();
         circ.radiusX = 6;
         circ.radiusY = 6;
