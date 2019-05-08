@@ -1,6 +1,8 @@
 'use strict';
 const { alert, error } = require("./lib/dialogs.js");
 const { Line, Rectangle, Ellipse, Text, Color } = require("scenegraph");
+const commands = require("commands");
+
 const CSV = require("./lib/csv");
 const fs = require("uxp").storage.localFileSystem;
 var assets = require("assets");
@@ -22,17 +24,21 @@ const titleText = '#ffffff';
 const defaultText = palette[6][1];
 
 
+
 const ht_row = 170;
 const wd_row = 30;
 const wd_full = 1920;
 const wd_offset = 330;
-const ht_offset = 190;
+const ht_offset = 170;
 
 const ht = 100;
 const wd = 160;
 const gutter = 10;
 const gutterX = 5;
 const gutterY = 32;
+
+var row_x;
+var row_y;
 
 var offsetX = 2 * wd + gutterX;
 var offsetY = 110;
@@ -78,6 +84,10 @@ function drawJourney(arr, selection) {
     // draw background rows and title blocks
     var str = " ";
     for (j = 0; j < rows; j++) {
+        // calculate row 'origin'
+        row_x = wd_offset + gutter + wd_row;
+        row_y = ht_offset + j * (ht_row + gutter);
+
         // draw row
         var rect = new Rectangle();
         rect.width = wd_full;
@@ -85,7 +95,7 @@ function drawJourney(arr, selection) {
         rect.fill = new Color(palette[j+2][1], 0.1);
         rect.stroke = null;
         selection.insertionParent.addChild(rect);
-        rect.moveInParentCoordinates(wd_offset + gutter + wd_row, (ht_offset + j * (ht_row + gutter) ) );
+        rect.moveInParentCoordinates(row_x, row_y );
 
         // draw header
         var rect = new Rectangle();
@@ -94,9 +104,12 @@ function drawJourney(arr, selection) {
         rect.fill = new Color(palette[j+2][1]);
         rect.stroke = null;
         selection.insertionParent.addChild(rect);
-        rect.moveInParentCoordinates(wd_offset, (ht_offset + j * (ht_row + gutter)));
+        // NB x position of tile block is offset
+        rect.moveInParentCoordinates(wd_offset, row_y);
 
-        // text
+        // row title text
+
+        // add a node and rotate 270 degrees
 
         if (arr[j][0] !== null && arr[j][0] !== ""){
             str = String(arr[j][0]);
@@ -108,44 +121,20 @@ function drawJourney(arr, selection) {
             fill: new Color(titleText),
             fontSize: fontHeaderSize
         }];
-        //text.rotation = 90;
+
         selection.insertionParent.addChild(text);
-        text.moveInParentCoordinates(wd_offset + wd_row/2, (ht_offset + j * (ht_row + gutter)) + ht_row/2);
+        text.moveInParentCoordinates(wd_offset, (ht_offset + j * (ht_row + gutter)));
+console.log(arr);
+        if (j === 2){
+            // add emotion points
+            drawEmotions(arr[2], selection);
+        }
 
-    }
-
-    /*
-    for (j = 0; j < rows; j++) {
+        // add the text blocks
+        str = " ";
         cols = arr[j].length;
-        // process the emotions with emoticons
-        if (j === 7) {
-            drawEmotions(arr[j], selection);
-        }
-
-        // double ht line for journey emotions
-        if (j === 8) {
-            offsetY = offsetY + ht;
-        }
-
-        var str = " ";
         for (i = 0; i < cols; i++) {
-            if (i == 0) {
-                // add header
-                if (arr[j][i] !== null && arr[j][i] !== ""){
-                    str = String(arr[j][i]);
-                }
-                text = new Text();
-                text.text = str;
-                text.styleRanges = [{
-                    length: str.length,
-                    fill: new Color("black"),
-                    fontSize: fontHeaderSize
-                }];
-                selection.insertionParent.addChild(text);
-                text.moveInParentCoordinates(offsetX + (gutterX + (i) * (wd + gutterX)), offsetY - 2 * gutterX + (j - 4) * (ht + gutterY));
-            }
-
-            if (arr[j][i] !== null && i > 0 && j !== 7) {
+          if (arr[j][i] !== null && i > 0 && j !== 2) {
                 if (arr[j][i] !== "") {
                     var str = String(arr[j][i]); // cast to string so we can get length
                     text = new Text();
@@ -153,38 +142,32 @@ function drawJourney(arr, selection) {
                     text.text = str;
                     text.styleRanges = [{
                         length: str.length,
-                        fill: new Color(textFill[1]),
+                        fill: new Color(defaultText),
                         fontSize: fontSize
                     }];
-                }
 
-                const rect = new Rectangle();
-                rect.width = wd;
-                rect.height = ht;
-                rect.fill = new Color(allColors[j - 5].color);
-                rect.stroke = null;
-
-                selection.insertionParent.addChild(rect);
-                rect.moveInParentCoordinates(offsetX + ((i - 1) * (wd + gutterX)), (offsetY + (j - 4) * (ht + gutterY)));
-
-                if (arr[j][i] !== "") {
+                    row_y = ht_offset + j * (ht_row + gutter) + gutter*2;
                     selection.insertionParent.addChild(text);
-                    text.moveInParentCoordinates(offsetX + (gutterX + (i - 1) * (wd + gutterX)), offsetY  + (j - 4) * (ht + gutterY) + 2* gutterX);
+                    text.moveInParentCoordinates(row_x + (i - 1) * (wd + gutter) + gutter, row_y);
                 }
             }
         }
-    }*/
+    }
+
 }
 
 
 // do two loops one to set line beneath all circles
 function drawEmotions(arr, selection) {
+    console.log(arr);
     var i, j;
     var x, y;
     var lastX = null;
     var lastY = null;
     var value;
     var len = arr.length;
+
+    let lines = [];
     for (i = 1; i < len; i++) {
         // default value
         value = 1;
@@ -207,11 +190,17 @@ function drawEmotions(arr, selection) {
             );
 
             line.strokeEnabled = true;
+            line.strokeDashArray = [3, 10];
             line.stroke = new Color("black");
             line.strokeWidth = 3;
 
+            lines.push(line);
+            //selection.editContext.addChild(line)
             selection.insertionParent.addChild(line);
         }
+
+        selection.items = lines;
+        commands.group();
 
         lastX = x;
         lastY = y;
@@ -226,11 +215,11 @@ function drawEmotions(arr, selection) {
         x = offsetX + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
         y = (offsetY + (3) * (ht + gutterY)) + value * ht / 5;
         const circ = new Ellipse();
-        circ.radiusX = wd / 5;
-        circ.radiusY = wd / 5;
-        circ.fill = new Color(trafficLights[value][1]);
-        circ.stroke = new Color('white');
-        circ.strokeWidth = 10;
+        circ.radiusX = 6;
+        circ.radiusY = 6;
+        circ.fill = new Color(defaultText);
+        //circ.stroke = new Color('white');
+        circ.strokeWidth = 1;
 
         selection.insertionParent.addChild(circ);
         circ.moveInParentCoordinates(x, y);
@@ -240,7 +229,6 @@ function drawEmotions(arr, selection) {
 
 
 function drawSidePanel(arr, selection) {
-    console.log("-------------------------");
     const len = 5; // get first four rows to use as side-bar content
     const rect = new Rectangle();
     rect.width = wd * 2;
@@ -260,7 +248,7 @@ function drawSidePanel(arr, selection) {
     circ.moveInParentCoordinates(gutterX + wd / 2, gutterY);
 
     // use Persona value as page title
-    var str = "User";
+    var str = "Default Persona title";
     if(arr[0][1]!==null && arr[0][1]!==""){
         str = String(arr[0][1]);
     }
@@ -278,10 +266,8 @@ function drawSidePanel(arr, selection) {
     var i, j, displayFont;
     var rowLength = 0;
     for (j = 1; j < len; j++) {
-        console.log("row" + arr[j]);
         rowLength = arr[j].length;
         for (i = 0; i < rowLength; i++) {
-            console.log(arr[j][i]);
             // TODO: loop thru items and built a bullet list
             // add as an areabox.
             // get height?
@@ -302,8 +288,6 @@ function drawSidePanel(arr, selection) {
 
                 selection.insertionParent.addChild(text);
                 text.moveInParentCoordinates(gutterX, offsetY - 2 * gutterX + j * (ht + gutterY) + i*16 );
-
-
             }
         }
     }
