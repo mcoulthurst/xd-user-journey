@@ -153,20 +153,23 @@ function drawJourney(arr, selection) {
                         fill: new Color(defaultText),
                         fontSize: fontSize
                     }];
-console.log(arr[j][i]);
+
+            console.log('row ' +j);
                     // set ypos based on emotion point
                     var correction = 0;
-                    if (j === 2){
+                    if (j === 3){
                         let value = 1;
+                        //check the previous row "emotion"
                         if(arr[2][i]!==null){
                             value = parseInt(arr[2][i]);
                         }
-                        console.log(arr[2][i]);
-                        if(value<3){
-                            correction = 170;
+
+                        if(value>2){
+                            correction = -170;
                         }
-                        drawEmotions(arr[2], selection);
+                        console.log(arr[2][i], correction);
                     }
+                    //console.log(correction);
                     row_y = ht_offset + j * (ht_row + gutter) + gutter*2 + correction;
                     selection.insertionParent.addChild(text);
                     text.moveInParentCoordinates(row_x + (i - 1) * (wd + gutter) + gutter, row_y);
