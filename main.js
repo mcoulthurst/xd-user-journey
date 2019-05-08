@@ -61,7 +61,6 @@ async function createUserJourney(selection) {
 
     const contents = await aFile.read();
     const arr = CSV.parse(contents);
-    offsetY = 110;
 
 
     if(arr.length<6 ){
@@ -77,7 +76,6 @@ async function createUserJourney(selection) {
 
 
 function drawJourney(arr, selection) {
-    console.log(arr);
     var rows = arr.length;
     var cols;
     var text;
@@ -155,8 +153,21 @@ function drawJourney(arr, selection) {
                         fill: new Color(defaultText),
                         fontSize: fontSize
                     }];
-
-                    row_y = ht_offset + j * (ht_row + gutter) + gutter*2;
+console.log(arr[j][i]);
+                    // set ypos based on emotion point
+                    var correction = 0;
+                    if (j === 2){
+                        let value = 1;
+                        if(arr[2][i]!==null){
+                            value = parseInt(arr[2][i]);
+                        }
+                        console.log(arr[2][i]);
+                        if(value<3){
+                            correction = 170;
+                        }
+                        drawEmotions(arr[2], selection);
+                    }
+                    row_y = ht_offset + j * (ht_row + gutter) + gutter*2 + correction;
                     selection.insertionParent.addChild(text);
                     text.moveInParentCoordinates(row_x + (i - 1) * (wd + gutter) + gutter, row_y);
                 }
@@ -176,6 +187,15 @@ function drawEmotions(arr, selection) {
     var value;
     var len = arr.length;
     var offsetChart = (wd - gutterX * 3)/2;
+    var padding = 40;
+    var ht_range = ht_row - padding*2;
+    var ht_step = parseInt(ht_range/4);
+    console.log(ht_range, ':', ht_step);
+    console.log(row_y);
+
+        // calculate row 'origin'
+        //row_x = wd_offset + gutter + wd_row;
+        //row_y = ht_offset + j * (ht_row + gutter);
 
     let lines = [];
     for (i = 1; i < len; i++) {
@@ -185,18 +205,20 @@ function drawEmotions(arr, selection) {
             value = parseInt(arr[i]);
         }
 
-        x = offsetX + offsetChart + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
-        y = (offsetY + 3 * (ht + gutterY)) + value * ht_row / 5;
+        //x = offsetX + offsetChart + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
+        //y = (offsetY + 3 * (ht + gutter)) + value * ht_row / 5;
+        x = row_x + (i - 1) * (wd + gutter) + wd/2;
+        y = row_y + (value - 1) * ht_step + padding;
 
         //add line back to previous item
         if(lastX!==null){
             const line = new Line();
 
             line.setStartEnd(
-                x + wd/5,
-                y + wd/5,
-                lastX + wd/5,   // correct for anchor point of ellipse
-                lastY + wd/5
+                x + 6,
+                y + 6,
+                lastX + 6,   // correct for anchor point of ellipse
+                lastY + 6
             );
 
             line.strokeEnabled = true;
@@ -222,8 +244,10 @@ function drawEmotions(arr, selection) {
         if(arr[i]!==null){
             value = parseInt(arr[i]);
         }
-        x = offsetX + offsetChart + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
-        y = (offsetY + (3) * (ht + gutterY)) + value * ht_row / 5;
+        //x = offsetX + offsetChart + ((i - 1) * (wd + gutter)) + wd / 2 - wd / 5;
+        //y = (offsetY + (3) * (ht + gutterY)) + value * ht_row / 5;
+        x = row_x + ((i - 1) * (wd + gutter)) + wd/2;
+        y = row_y +  (value - 1) * ht_step + padding;
         const circ = new Ellipse();
         circ.radiusX = 6;
         circ.radiusY = 6;
