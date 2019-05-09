@@ -125,18 +125,18 @@ function drawJourney(arr, selection) {
         text.rotateAround(270, text.localCenterPoint);
         text.text = str;
         //text.textAlign = Text.ALIGN_CENTER;
-        text.textAlign = Text.ALIGN_LEFT;
+        text.textAlign = Text.ALIGN_RIGHT;
         //text.width = 170;
         text.styleRanges = [{
             length: str.length,
-            fill: new Color('black'),
-            //fill: new Color(titleText),
+            fill: new Color(titleText),
             fontSize: fontHeaderSize
         }];
 
         selection.insertionParent.addChild(text);
-        let x = wd_offset;
-        let y = ht_offset + (j) * ht_row + gutter ;
+        let x = wd_offset + gutter + 5;
+        let y = rowHts[j] + gutter;
+        console.log(x,y);
         text.moveInParentCoordinates(x, y);
 
         // add the text blocks
@@ -171,7 +171,9 @@ function drawJourney(arr, selection) {
                     }
 
                     selection.insertionParent.addChild(text);
-                    text.moveInParentCoordinates(row_x + (i - 1) * (wd + gutter) + gutter, row_y + gutter + correction);
+                    let x = row_x + (i - 1) * (wd + gutter) + gutter;
+                    let y = row_y + gutter + correction;
+                    text.moveInParentCoordinates(x, y);
                 }
             }
         }
@@ -290,7 +292,9 @@ function drawSidePanel(arr, selection) {
     }];
 
     selection.insertionParent.addChild(text);
-    text.moveInParentCoordinates((offsetX + gutterX), (2*gutterY + ht / 2));
+    let x = offsetX + gutterX;
+    let y = 2*gutterY + ht/2;
+    text.moveInParentCoordinates(x, y);
 
     var i, j, displayFont;
     var rowLength = 0;
@@ -316,7 +320,9 @@ function drawSidePanel(arr, selection) {
                 }];
 
                 selection.insertionParent.addChild(text);
-                text.moveInParentCoordinates(gutterX, offsetY - 2 * gutterX + j * (ht + gutterY) + i*16 );
+                let x = gutterX;
+                let y = offsetY - 2*gutterX + j*(ht + gutterY) + i*16;
+                text.moveInParentCoordinates(x, y );
             }
         }
     }
