@@ -6,7 +6,8 @@ This plugin loads in user journey text from a CSV file and renders the different
 1. Prepare a CSV file with a separate row for each section as detailed in the data section below.
 2. Add an artboard and run the plugin from "Plugins > User Journey" or use the shortcut (ctrl + shft + U).
 3. Select and load your CSV file.
-4. If the journey extends beyond the boundaires of the artboard use
+4. If the journey extends beyond the boundaires of the artboard use.
+5. Add Persona images and format the graphics as required.
 
 ## Installation
 
