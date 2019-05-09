@@ -98,55 +98,46 @@ function drawJourney(arr, selection) {
         }
         row_y = rowHts[j];
 
-            // draw row
-            var rect = new Rectangle();
-            rect.width = wd_full;
-            rect.height = ht_row;
-            rect.fill = new Color(palette[j+2][1], 0.1);
-            rect.stroke = null;
-            selection.insertionParent.addChild(rect);
-            rect.moveInParentCoordinates(row_x, row_y );
+        // draw row
+        var rect = new Rectangle();
+        rect.width = wd_full;
+        rect.height = ht_row;
+        rect.fill = new Color(palette[j+2][1], 0.1);
+        rect.stroke = null;
+        selection.insertionParent.addChild(rect);
+        rect.moveInParentCoordinates(row_x, row_y );
 
-            // draw header
-            var rect = new Rectangle();
-            rect.width = wd_row;
-            rect.height = ht_row;
-            rect.fill = new Color(palette[j+2][1]);
-            rect.stroke = null;
-            selection.insertionParent.addChild(rect);
-            // NB x position of title block is offset
-            rect.moveInParentCoordinates(wd_offset, row_y);
+        // draw header
+        var rect = new Rectangle();
+        rect.width = wd_row;
+        rect.height = ht_row;
+        rect.fill = new Color(palette[j+2][1]);
+        rect.stroke = null;
+        selection.insertionParent.addChild(rect);
+        // NB x position of title block is offset
+        rect.moveInParentCoordinates(wd_offset, row_y);
 
-            // row title text
-            if (arr[j][0] !== null && arr[j][0] !== ""){
-                str = String(arr[j][0]);
-            }
-            let text = new scenegraph.Text();
-            text.rotateAround(270, text.localCenterPoint);
-            text.text = str;
-            //text.textAlign = Text.ALIGN_CENTER;
-            text.textAlign = Text.ALIGN_LEFT;
-            //text.width = 170;
-            text.styleRanges = [{
-                length: str.length,
-                fill: new Color('black'),
-                //fill: new Color(titleText),
-                fontSize: fontHeaderSize
-            }];
-
-            selection.insertionParent.addChild(text);
-            let x = wd_offset;
-            let y = ht_offset + (j) * ht_row + gutter ;
-            text.moveInParentCoordinates(x, y);
-        //}
-/*
-        if (j === 2){
-            // add emotion points
-            drawEmotions(emotionArray, selection);
+        // row title text
+        if (arr[j][0] !== null && arr[j][0] !== ""){
+            str = String(arr[j][0]);
         }
-*/
+        let text = new scenegraph.Text();
+        text.rotateAround(270, text.localCenterPoint);
+        text.text = str;
+        //text.textAlign = Text.ALIGN_CENTER;
+        text.textAlign = Text.ALIGN_LEFT;
+        //text.width = 170;
+        text.styleRanges = [{
+            length: str.length,
+            fill: new Color('black'),
+            //fill: new Color(titleText),
+            fontSize: fontHeaderSize
+        }];
 
-
+        selection.insertionParent.addChild(text);
+        let x = wd_offset;
+        let y = ht_offset + (j) * ht_row + gutter ;
+        text.moveInParentCoordinates(x, y);
 
         // add the text blocks
         str = " ";
@@ -164,38 +155,30 @@ function drawJourney(arr, selection) {
                         fontSize: fontSize
                     }];
 
-                    // set ypos of TOUCH POINTS based on emotion point
+                    // set yPos of TOUCH POINTS based on emotion point
                     var correction = 0;
                     if (j === 2){
                         let value = 1;
-                        //check the previous row "emotion"
+                        //check the "emotion" row
                         if(emotionArray[i]!==null){
                             value = parseInt(emotionArray[i]);
                         }
 
-                        if(value>2){
-                            correction = -170;
+                        if(value<3){
+                            correction = 170;
                         }
-                        //console.log(arr[2][i], correction);
+
                     }
-                    //console.log(correction);
-                    //row_y = ht_offset + j * (ht_row + gutter) + gutter*2 + correction;
+
                     selection.insertionParent.addChild(text);
-                    text.moveInParentCoordinates(row_x + (i - 1) * (wd + gutter) + gutter, row_y + gutter);
+                    text.moveInParentCoordinates(row_x + (i - 1) * (wd + gutter) + gutter, row_y + gutter + correction);
                 }
             }
         }
+        row_y = row_y + ht_row + gutter;
 
-
-        // set height for nex row
-
-        /*if (j !== 2){
-            // calculate cumulative row 'origin'
-            row_y = row_y + ht_row + gutter;
-        }*/
-            row_y = row_y + ht_row + gutter;
-            console.log('row ', row_y);
     }
+
     drawEmotions(emotionArray, selection);
 }
 
@@ -214,11 +197,6 @@ function drawEmotions(arr, selection) {
     var ht_step = parseInt(ht_range/4);
 
 
-
-        // calculate row 'origin'
-        //row_x = wd_offset + gutter + wd_row;
-        //row_y = ht_offset + j * (ht_row + gutter);
-
     let lines = [];
     for (i = 1; i < len; i++) {
         // default value
@@ -227,8 +205,6 @@ function drawEmotions(arr, selection) {
             value = parseInt(arr[i]);
         }
 
-        //x = offsetX + offsetChart + ((i - 1) * (wd + gutterX)) + wd / 2 - wd / 5;
-        //y = (offsetY + 3 * (ht + gutter)) + value * ht_row / 5;
         x = row_x + (i - 1) * (wd + gutter) + wd/2;
         y = rowHts[2] + (value - 1) * ht_step + padding;
 
@@ -249,7 +225,6 @@ function drawEmotions(arr, selection) {
             line.strokeWidth = 3;
 
             lines.push(line);
-            //selection.editContext.addChild(line)
             selection.insertionParent.addChild(line);
         }
 
@@ -266,15 +241,13 @@ function drawEmotions(arr, selection) {
         if(arr[i]!==null){
             value = parseInt(arr[i]);
         }
-        //x = offsetX + offsetChart + ((i - 1) * (wd + gutter)) + wd / 2 - wd / 5;
-        //y = (offsetY + (3) * (ht + gutterY)) + value * ht_row / 5;
+
         x = row_x + ((i - 1) * (wd + gutter)) + wd/2;
         y = rowHts[2] + (value - 1) * ht_step + padding;
         const circ = new Ellipse();
         circ.radiusX = 6;
         circ.radiusY = 6;
         circ.fill = new Color(defaultText);
-        //circ.stroke = new Color('white');
         circ.strokeWidth = 1;
 
         selection.insertionParent.addChild(circ);
@@ -325,7 +298,7 @@ function drawSidePanel(arr, selection) {
         rowLength = arr[j].length;
         for (i = 0; i < rowLength; i++) {
             // TODO: loop thru items and built a bullet list
-            // add as an areabox.
+            // add as an areabox. NB hard breaks \n wrap text
             // get height?
             if (arr[j][i] !== null && arr[j][i] !== "") {
                 str = String(arr[j][i]);
