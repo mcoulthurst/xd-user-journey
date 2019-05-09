@@ -302,13 +302,13 @@ function drawSidePanel(arr, selection) {
     selection.insertionParent.addChild(rect);
     //persona icon placeholder
     const circ = new Ellipse();
-    circ.radiusX = wd / 2 - gutterX;
-    circ.radiusY = wd / 2 - gutterX;
+    circ.radiusX = wd/2 - gutter;
+    circ.radiusY = wd/2 - gutter;
     circ.fill = null;
     circ.stroke = new Color(sidePanelText);
     circ.strokeWidth = 3;
     selection.insertionParent.addChild(circ);
-    circ.moveInParentCoordinates(gutterX + wd / 2, gutterY);
+    circ.moveInParentCoordinates(gutter + wd/2, gutter*2);
 
     // use Persona value as page title
     var str = "Default Persona title";
@@ -324,8 +324,8 @@ function drawSidePanel(arr, selection) {
     }];
 
     selection.insertionParent.addChild(text);
-    let x = offsetX + gutterX;
-    let y = 2*gutterY + ht/2;
+    let x = offsetX + gutter;
+    let y = wd/2 + gutter*3; // match the center of hte circel
     text.moveInParentCoordinates(x, y);
 
     var i, j, displayFont;
@@ -352,9 +352,9 @@ function drawSidePanel(arr, selection) {
                 }];
 
                 selection.insertionParent.addChild(text);
-                let x = gutterX;
-                let y = offsetY - 2*gutterX + j*(ht + gutterY) + i*16;
-                text.moveInParentCoordinates(x, y );
+                let x = gutter;
+                let y = rowHts[0] + (j-1)*(ht_row + gutter) + i*16 + gutter;
+                text.moveInParentCoordinates(x, y);
             }
         }
     }
