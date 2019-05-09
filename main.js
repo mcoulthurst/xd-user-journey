@@ -1,6 +1,6 @@
 'use strict';
 const { alert, error } = require("./lib/dialogs.js");
-const { Line, Rectangle, Ellipse, Text, Color } = require("scenegraph");
+const { Line, Rectangle, Ellipse, Text, Color, Path } = require("scenegraph");
 const commands = require("commands");
 
 let scenegraph = require("scenegraph");
@@ -199,8 +199,9 @@ function drawEmotions(arr, selection) {
     var padding = 40;
     var ht_range = ht_row*2 - padding*2;
     var ht_step = parseInt(ht_range/4);
+    var points = [];
 
-
+/*
     let lines = [];
     for (i = 1; i < len; i++) {
         // default value
@@ -230,15 +231,18 @@ function drawEmotions(arr, selection) {
 
             lines.push(line);
             selection.insertionParent.addChild(line);
+
+
         }
 
 
         lastX = x;
         lastY = y;
     }
-        selection.items = lines;
-        commands.group();
 
+    selection.items = lines;
+    commands.group();
+*/
     var startY, endY = 0;
 
     for (i = 1; i < len; i++) {
@@ -260,6 +264,8 @@ function drawEmotions(arr, selection) {
 
         selection.insertionParent.addChild(circ);
         circ.moveInParentCoordinates(x, y);
+
+        points.push([x+6, y+6]);
 
         //draw vert line
         const line = new Line();
@@ -284,9 +290,30 @@ function drawEmotions(arr, selection) {
         line.stroke = new Color(defaultText);
         line.strokeWidth = 1;
 
-
         selection.insertionParent.addChild(line);
+
     }
+
+    //draw a path between points
+    len = points.length;
+
+    let pathData = 'M' + points[0][0] +',' + points[0][1]  ; // [2]
+
+    for (i = 1; i < len; i++) {
+        //var nextX  = (points[i][0] +points[i+1][0])/2;
+        //var nextY  = (points[i][1] +points[i+1][1])/2;
+        //pathData += ' L' + nextX +',' + nextY;
+        pathData += ' L' + points[i][0] +',' + points[i][1];
+    }
+    console.log(pathData);
+    const curve = new Path();
+    curve.pathData = pathData;
+    curve.strokeEnabled = true;
+    curve.strokeDashArray = [3, 10];
+    curve.stroke = new Color("black");
+    curve.strokeWidth = 3
+
+    selection.insertionParent.addChild(curve);
 
 }
 
