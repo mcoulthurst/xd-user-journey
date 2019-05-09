@@ -29,11 +29,11 @@ const defaultText = palette[6][1];
 
 var ht_row = 170;
 const wd_row = 30;
-const wd_full = 1920;
+var wd_full = 1920;
 const wd_offset = 330;
 const ht_offset = 170;
 
-const ht = 100;
+const ht = 150;
 const wd = 160;
 const gutter = 10;
 const gutterX = 5;
@@ -90,6 +90,8 @@ function drawJourney(arr, selection) {
     // split out the emotion row
     let emotionArray = arr.splice(2,1)[0];
     rows = arr.length;
+
+    wd_full = arr[0].length * wd;
 
     for (j = 0; j < rows; j++) {
         ht_row = 170;
@@ -230,12 +232,14 @@ function drawEmotions(arr, selection) {
             selection.insertionParent.addChild(line);
         }
 
-        selection.items = lines;
-        commands.group();
 
         lastX = x;
         lastY = y;
     }
+        selection.items = lines;
+        commands.group();
+
+    var startY, endY = 0;
 
     for (i = 1; i < len; i++) {
         // default value
@@ -246,6 +250,8 @@ function drawEmotions(arr, selection) {
 
         x = row_x + ((i - 1) * (wd + gutter)) + wd/2;
         y = rowHts[2] + (value - 1) * ht_step + padding;
+
+        // draw point
         const circ = new Ellipse();
         circ.radiusX = 6;
         circ.radiusY = 6;
@@ -254,6 +260,32 @@ function drawEmotions(arr, selection) {
 
         selection.insertionParent.addChild(circ);
         circ.moveInParentCoordinates(x, y);
+
+        //draw vert line
+        const line = new Line();
+
+        // determine direction of line
+        if(value<3){
+            startY = y + 10;
+            endY = 710;
+          }else{
+            startY = y - 10;
+            endY = 600;
+          }
+
+        line.setStartEnd(
+            x + 6,
+            startY + 6,
+            x + 6,
+            endY + 6   // correct for anchor point of ellipse
+        );
+
+        line.strokeEnabled = true;
+        line.stroke = new Color(defaultText);
+        line.strokeWidth = 1;
+
+
+        selection.insertionParent.addChild(line);
     }
 
 }
