@@ -28,7 +28,7 @@ This plugin loads in user journey text from a CSV file and renders the different
 
 
 ## Data
-The CSV should be arranged in the following way (see [sample CSV](blob/master/data/serviceuser.csv) for details):
+The CSV should be arranged in the following way (see [sample CSV](data/serviceuser.csv) for details):
 The first column is the row title, with entries in the following cells for that topic
 
 * Row 1: Persona
