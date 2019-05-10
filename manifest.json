@@ -28,8 +28,8 @@
         "width": 192,
         "height": 192
     }],
-    "version": "1.0.3",
-    "releaseNotes": "Add error message for too few or too many rows of data.",
+    "version": "1.1.0",
+    "releaseNotes": "Revised design layout. Simplified assets on screen to aid editing",
     "name": "User journey",
     "host":
     {
