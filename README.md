@@ -1,8 +1,8 @@
-# User Journey generator for Adode XD
+# User Journey generator for Adobe XD
 XD plugin to create initial layout of user journey from a CSV file
 This plugin loads in user journey text from a CSV file and renders the different journey stages
 
-##Usage
+## Usage
 1. Prepare a CSV file with a separate row for each section as detailed in the data section below.
 2. Add an artboard and run the plugin from "Plugins > User Journey" or use the shortcut (ctrl + shft + U).
 3. Select and load your CSV file.
