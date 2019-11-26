@@ -126,9 +126,7 @@ function drawJourney(arr, selection) {
         let text = new scenegraph.Text();
         text.rotateAround(270, text.localCenterPoint);
         text.text = str;
-        //text.textAlign = Text.ALIGN_CENTER;
         text.textAlign = Text.ALIGN_RIGHT;
-        //text.width = 170;
         text.styleRanges = [{
             length: str.length,
             fill: new Color(titleText),
@@ -138,7 +136,6 @@ function drawJourney(arr, selection) {
         selection.insertionParent.addChild(text);
         let x = wd_offset + gutter + 5;
         let y = rowHts[j] + gutter;
-        console.log(x,y);
         text.moveInParentCoordinates(x, y);
 
         // add the text blocks
@@ -200,49 +197,6 @@ function drawEmotions(arr, selection) {
     var ht_range = ht_row*2 - padding*2;
     var ht_step = parseInt(ht_range/4);
     var points = [];
-
-/*
-    let lines = [];
-    for (i = 1; i < len; i++) {
-        // default value
-        value = 1;
-        if(arr[i]!==null){
-            value = parseInt(arr[i]);
-        }
-
-        x = row_x + (i - 1) * (wd + gutter) + wd/2;
-        y = rowHts[2] + (value - 1) * ht_step + padding;
-
-        //add line back to previous item
-        if(lastX!==null){
-            const line = new Line();
-
-            line.setStartEnd(
-                x + 6,
-                y + 6,
-                lastX + 6,   // correct for anchor point of ellipse
-                lastY + 6
-            );
-
-            line.strokeEnabled = true;
-            line.strokeDashArray = [3, 10];
-            line.stroke = new Color("black");
-            line.strokeWidth = 3;
-
-            lines.push(line);
-            selection.insertionParent.addChild(line);
-
-
-        }
-
-
-        lastX = x;
-        lastY = y;
-    }
-
-    selection.items = lines;
-    commands.group();
-*/
     var startY, endY = 0;
 
     for (i = 1; i < len; i++) {
@@ -297,15 +251,11 @@ function drawEmotions(arr, selection) {
     //draw a path between points
     len = points.length;
 
-    let pathData = 'M' + points[0][0] +',' + points[0][1]  ; // [2]
+    let pathData = 'M' + points[0][0] +',' + points[0][1];
 
     for (i = 1; i < len; i++) {
-        //var nextX  = (points[i][0] +points[i+1][0])/2;
-        //var nextY  = (points[i][1] +points[i+1][1])/2;
-        //pathData += ' L' + nextX +',' + nextY;
         pathData += ' L' + points[i][0] +',' + points[i][1];
     }
-    console.log(pathData);
     const curve = new Path();
     curve.pathData = pathData;
     curve.strokeEnabled = true;
@@ -352,38 +302,54 @@ function drawSidePanel(arr, selection) {
 
     selection.insertionParent.addChild(text);
     let x = offsetX + gutter;
-    let y = wd/2 + gutter*3; // match the center of hte circel
+    let y = wd/2 + gutter*3; // match the center of the circle
     text.moveInParentCoordinates(x, y);
 
     var i, j, displayFont;
     var rowLength = 0;
-    for (j = 1; j < len; j++) {
-        rowLength = arr[j].length;
-        for (i = 0; i < rowLength; i++) {
-            // TODO: loop thru items and built a bullet list
-            // add as an areabox. NB hard breaks \n wrap text
-            // get height?
-            if (arr[j][i] !== null && arr[j][i] !== "") {
-                str = String(arr[j][i]);
-                if (i === 0) {
-                    displayFont = fontHeaderSize;
-                } else {
-                    displayFont = fontSize;
-                }
-                text = new Text();
-                text.text = str;
-                text.styleRanges = [{
-                    length: str.length,
-                    fill: new Color(sidePanelText),
-                    fontSize: displayFont
-                }];
+    str = "";
 
-                selection.insertionParent.addChild(text);
-                let x = gutter;
-                let y = rowHts[0] + (j-1)*(ht_row + gutter) + i*16 + gutter;
-                text.moveInParentCoordinates(x, y);
+    for (j = 1; j < len; j++) {
+        // add title
+        if (arr[j][0] !== null && arr[j][0] !== "") {
+            str = String(arr[j][0]);
+        }
+
+        text = new Text();
+        text.text = str;
+        text.styleRanges = [{
+            length: str.length,
+            fill: new Color(sidePanelText),
+            fontSize: fontHeaderSize
+        }];
+
+        selection.insertionParent.addChild(text);
+        let xTitle = gutter;
+        let yTitle = rowHts[0] + (j-1)*(ht_row + gutter) + gutter;
+        text.moveInParentCoordinates(xTitle, yTitle);
+
+        // loop though and build single string
+        str = "";
+        rowLength = arr[j].length;
+        for (i = 1; i < rowLength; i++) {
+            if (arr[j][i] !== null && arr[j][i] !== "") {
+                str += String(arr[j][i]) +"\n";
             }
         }
+
+        text = new Text();
+        text.areaBox = { width: wd*2 - gutterX * 3, height: ht };
+        text.text = str;
+        text.styleRanges = [{
+            length: str.length,
+            fill: new Color(sidePanelText),
+            fontSize: fontSize
+        }];
+
+        selection.insertionParent.addChild(text);
+        let x = gutter;
+        let y = rowHts[0] + (j-1)*(ht_row + gutter) + 16 + gutter; // +16px to account for title
+        text.moveInParentCoordinates(x, y);
     }
 
 }
