@@ -28,8 +28,8 @@
         "width": 192,
         "height": 192
     }],
-    "version": "1.1.0",
-    "releaseNotes": "Revised design layout. Simplified assets on screen to aid editing",
+    "version": "1.1.1",
+    "releaseNotes": "Wraps text to fit in left hand column. Added an optional 'timeline row' to the Pain Points section",
     "name": "User journey",
     "host":
     {

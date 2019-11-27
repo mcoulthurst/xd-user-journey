@@ -50,7 +50,7 @@ var fontHeaderSize = 18;
 var fontLargeSize = 48;
 var allColors;
 
-var rowHts  =  [190, 370, 550, 900];
+var rowHts  =  [190, 370, 550, 900, 870];
 
 
 async function createUserJourney(selection) {
@@ -100,53 +100,61 @@ function drawJourney(arr, selection) {
         }
         row_y = rowHts[j];
 
-        // draw row
-        var rect = new Rectangle();
-        rect.width = wd_full;
-        rect.height = ht_row;
-        rect.fill = new Color(palette[j+2][1], 0.1);
-        rect.stroke = null;
-        selection.insertionParent.addChild(rect);
-        rect.moveInParentCoordinates(row_x, row_y );
+        // Do not draw a box for the Time
+        if(arr[j][0]!=="Timeline"){
+            // draw row
+            var rect = new Rectangle();
+            rect.width = wd_full;
+            rect.height = ht_row;
+            rect.fill = new Color(palette[j+2][1], 0.1);
+            rect.stroke = null;
+            selection.insertionParent.addChild(rect);
+            rect.moveInParentCoordinates(row_x, row_y );
 
-        // draw header
-        var rect = new Rectangle();
-        rect.width = wd_row;
-        rect.height = ht_row;
-        rect.fill = new Color(palette[j+2][1]);
-        rect.stroke = null;
-        selection.insertionParent.addChild(rect);
-        // NB x position of title block is offset
-        rect.moveInParentCoordinates(wd_offset, row_y);
+            // draw header
+            var rect = new Rectangle();
+            rect.width = wd_row;
+            rect.height = ht_row;
+            rect.fill = new Color(palette[j+2][1]);
+            rect.stroke = null;
+            selection.insertionParent.addChild(rect);
+            // NB x position of title block is offset
+            rect.moveInParentCoordinates(wd_offset, row_y);
 
-        // row title text
-        if (arr[j][0] !== null && arr[j][0] !== ""){
-            str = String(arr[j][0]);
+            // row title text
+            if (arr[j][0] !== null && arr[j][0] !== ""){
+                str = String(arr[j][0]);
+            }
+            let text = new scenegraph.Text();
+            text.rotateAround(270, text.localCenterPoint);
+            text.text = str;
+            text.textAlign = Text.ALIGN_RIGHT;
+            text.styleRanges = [{
+                length: str.length,
+                fill: new Color(titleText),
+                fontSize: fontHeaderSize
+            }];
+
+            selection.insertionParent.addChild(text);
+            let x = wd_offset + gutter + 5;
+            let y = rowHts[j] + gutter;
+            text.moveInParentCoordinates(x, y);
         }
-        let text = new scenegraph.Text();
-        text.rotateAround(270, text.localCenterPoint);
-        text.text = str;
-        text.textAlign = Text.ALIGN_RIGHT;
-        text.styleRanges = [{
-            length: str.length,
-            fill: new Color(titleText),
-            fontSize: fontHeaderSize
-        }];
-
-        selection.insertionParent.addChild(text);
-        let x = wd_offset + gutter + 5;
-        let y = rowHts[j] + gutter;
-        text.moveInParentCoordinates(x, y);
 
         // add the text blocks
         str = " ";
         cols = arr[j].length;
+        var xOffset = 0;
         for (i = 0; i < cols; i++) {
           if (arr[j][i] !== null && i > 0 ) {
                 if (arr[j][i] !== "") {
                     var str = String(arr[j][i]); // cast to string so we can get length
                     text = new Text();
-                    text.areaBox = { width: wd - gutterX * 3, height: ht };
+                    if(arr[j][0]!=="Timeline"){
+                        text.areaBox = { width: wd - gutterX * 3, height: ht };
+                    }else{
+                        xOffset = (wd - gutterX * 3)/2;
+                    }
                     text.text = str;
                     text.styleRanges = [{
                         length: str.length,
@@ -170,7 +178,7 @@ function drawJourney(arr, selection) {
                     }
 
                     selection.insertionParent.addChild(text);
-                    let x = row_x + (i - 1) * (wd + gutter) + gutter;
+                    let x = row_x + (i - 1) * (wd + gutter) + gutter + xOffset;
                     let y = row_y + gutter + correction;
                     text.moveInParentCoordinates(x, y);
                 }
