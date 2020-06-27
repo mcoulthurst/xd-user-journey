@@ -345,6 +345,10 @@ function drawSidePanel(arr, selection) {
             }
         }
 
+        // check for empty string
+        if(str===""){
+          str = " ";
+        }
         text = new Text();
         text.areaBox = { width: wd*2 - gutterX * 3, height: ht };
         text.text = str;
